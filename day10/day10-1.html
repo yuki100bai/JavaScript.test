@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>練習</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 6px 12px; }
+    .warn { background-color: #fff3cd; }   /* 黄色（差戻し用） */
+    .danger { background-color: #f8d7da; } /* 赤色（却下用） */
+  </style>
+</head>
+<body>
+
+  <!-- 棚（テーブル）の用意 -->
+  <table>
+    <thead>
+      <tr>
+        <th>申請番号</th><th>品名</th><th>部署</th><th>金額</th><th>ステータス</th><th>納品希望日</th>
+      </tr>
+    </thead>
+    <tbody id="purchase-tbody"></tbody>
+    <div>
+  <input type="text" id="keyword-input" placeholder="キーワードを入力">
+  
+  <select id="status-select">
+    <option value="すべて">すべて</option>
+    <option value="承認待ち">承認待ち</option>
+    <option value="承認済">承認済</option>
+    <option value="差戻し">差戻し</option>
+    <option value="却下">却下</option>
+  </select>
+
+  <button id="search-btn">検索</button>
+</div>
+  </table>
+
+<script>
+// 【共通関数】時間を脱がせる魔法
+function toDateOnly(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+// データの山（ダミーデータ）
+const requests = [
+  { id: 'A-0001', item: 'ノートPC',      amount: 158000, dept: '営業部',   status: '承認待ち', requestDate: '2026-07-10', dueDate: '2026-07-25' },
+  { id: 'A-0002', item: 'モニター',      amount: 32000,  dept: '営業部',   status: '承認済',   requestDate: '2026-07-08', dueDate: '2026-07-20' },
+  { id: 'A-0003', item: 'オフィスチェア', amount: 45000,  dept: '総務部',   status: '差戻し',   requestDate: '2026-07-12', dueDate: '2026-08-01' },
+  { id: 'A-0004', item: '複合機トナー',   amount: 18000,  dept: '総務部',   status: '承認待ち', requestDate: '2026-07-15', dueDate: '2026-07-19' },
+  { id: 'A-0005', item: '開発用サーバ',   amount: 480000, dept: '開発部',   status: '承認待ち', requestDate: '2026-07-14', dueDate: '2026-08-10' },
+  { id: 'A-0006', item: 'ウイルス対策ソフト', amount: 96000, dept: '開発部', status: '承認済',  requestDate: '2026-07-05', dueDate: '2026-07-15' },
+  { id: 'A-0007', item: '会議用マイク',   amount: 26000,  dept: '営業部',   status: '却下',     requestDate: '2026-07-11', dueDate: '2026-07-30' },
+  { id: 'A-0008', item: 'ノートPC',      amount: 158000, dept: '開発部',   status: '承認待ち', requestDate: '2026-07-16', dueDate: '2026-08-05' },
+];
+
+// 工場（テーブルを自動で組み立てて描画する関数）
+function renderTable(data) {
+  const tbody = document.getElementById('purchase-tbody');
+  tbody.innerHTML = ''; // 1. 古い表示をまずクリア（お掃除）
+
+  data.forEach((item) => {
+    const row = document.createElement('tr'); // 2. 新しい一行を作る
+
+    // 3. 行の中にマス目を流し込む（3桁カンマ ＆ 金額右寄せ付き）
+    row.innerHTML = `
+      <td>${item.id}</td>
+      <td>${item.item}</td>
+      <td>${item.dept}</td>
+      <td style="text-align: right;">${item.amount.toLocaleString()}</td>
+      <td>${item.status}</td>
+      <td>${item.dueDate}</td>
+    `;
+
+    // 4. 【問9-2】データ属性の名札を貼る
+    row.dataset.id = item.id;
+
+    // 5. 【問9-2】ステータスによる色分け（差戻しは黄色、却下は赤色）
+    if (item.status === '差戻し') {
+      row.classList.add('warn');
+    } else if (item.status === '却下') {
+      row.classList.add('danger');
+    }
+
+    // 6. 【問9-2】納期遅れの承認待ちを太字（bold）にする
+    const dueDate = toDateOnly(new Date(item.dueDate));
+    const today = toDateOnly(new Date());
+    if (item.status === '承認待ち' && dueDate < today) {
+      row.style.fontWeight = 'bold';
+    }
+
+    // 7. 完成した行を棚（tbody）にガチャンと追加する
+    tbody.appendChild(row);
+  });
+}
+
+// 8. 【命令】用意したデータを渡して、今すぐ一覧を描画して！
+renderTable(requests);
+
+// 9. 検索ボタンを取得
+const button = document.getElementById('search-btn');
+
+// 10. ボタンがクリックされた時の処理
+button.addEventListener('click', () => {
+  // ① 入力欄から値を取り出す
+  const keyword = document.getElementById('keyword-input').value;
+  const status = document.getElementById('status-select').value;
+
+  // ② データ（requests）を絞り込む
+  const filteredRequests = requests.filter((req) => {
+    const isKeywordMatch = keyword === '' || req.item.includes(keyword);
+    const isStatusMatch = status === 'すべて' || req.status === status;
+
+    return isKeywordMatch && isStatusMatch;
+  });
+
+  clearBtn.addEventListener('click', () => {
+
+  document.getElementById('keyword-input') .value ='';
+
+ document.getElementById('status-select').value = 'すべて';
+
+renderTable(requests);
+
+});   
+
+});
+
+
+</script>
+</body>
+</html>
