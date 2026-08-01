@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>練習</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 6px 12px; }
+    .error { color: red; font-size: 0.85em; }
+    .hidden { display: none; }
+    .warn { background-color: #fff3cd; }   /* 黄色 */
+    .danger { background-color: #f8d7da; } /* 赤 */
+    .done { background-color: #d4edda; }   /* 緑 */
+  </style>
+</head>
+<body>
+    
+
+  <!-- ここに問題ごとのHTMLを書く -->
+
+  <script>
+   const requests = [
+  { id: 'A-0001', item: 'ノートPC',      amount: 158000, dept: '営業部',   status: '承認待ち', requestDate: '2026-07-10', dueDate: '2026-07-25' },
+  { id: 'A-0002', item: 'モニター',      amount: 32000,  dept: '営業部',   status: '承認済',   requestDate: '2026-07-08', dueDate: '2026-07-20' },
+  { id: 'A-0003', item: 'オフィスチェア', amount: 45000,  dept: '総務部',   status: '差戻し',   requestDate: '2026-07-12', dueDate: '2026-08-01' },
+  { id: 'A-0004', item: '複合機トナー',   amount: 18000,  dept: '総務部',   status: '承認待ち', requestDate: '2026-07-15', dueDate: '2026-07-19' },
+  { id: 'A-0005', item: '開発用サーバ',   amount: 480000, dept: '開発部',   status: '承認待ち', requestDate: '2026-07-14', dueDate: '2026-08-10' },
+  { id: 'A-0006', item: 'ウイルス対策ソフト', amount: 96000, dept: '開発部', status: '承認済',  requestDate: '2026-07-05', dueDate: '2026-07-15' },
+  { id: 'A-0007', item: '会議用マイク',   amount: 26000,  dept: '営業部',   status: '却下',     requestDate: '2026-07-11', dueDate: '2026-07-30' },
+  { id: 'A-0008', item: 'ノートPC',      amount: 158000, dept: '開発部',   status: '承認待ち', requestDate: '2026-07-16', dueDate: '2026-08-05' },
+];
+
+// 問1：承認待ちデータの抽出
+const pendingRequests = requests.filter((request) => {
+  return request.status === '承認待ち';
+});
+console.log(1, pendingRequests);
+
+// 問2：合計金額の計算
+const totalAmount = pendingRequests.reduce((sum, request) => {
+  return sum + request.amount;
+}, 0);
+console.log(2, totalAmount);
+// 問3：「営業部」のデータを抽出
+const salesRequests = requests.filter((request) => {
+  return request.dept === '営業部';
+});
+
+console.log(3, salesRequests);
+const highAmountRequests = requests.filter((request) => {
+  return request.amount >= 100000;
+});
+
+// .length で件数を取得
+const highAmountCount = highAmountRequests.length;
+
+console.log(4, highAmountCount);
+// 問5：「営業部」かつ「承認待ち」のデータ
+const salesPendingRequests = requests.filter((request) => {
+  return request.dept ==='営業部' && request.status === '承認待ち';;
+});
+
+console.log(5, salesPendingRequests);
+
+// 問8-2-1：申請日の新しい順
+const sortedByNewestDate = [...requests].sort((a, b) => {
+return b.requestDate.localeCompare(a.requestDate)
+});
+console.log('8-2-1', sortedByNewestDate);
+
+// 問8-2-2：金額の高い順
+const sortedByAmount = [...requests].sort((a, b) => {
+return b.amount - a.amount;
+});console.log('8-2-2', sortedByAmount);
+
+// 問8-2-3：id が 'A-0005' のオブジェクトを取得
+const foundRequest = requests.find((req) => {
+  return req.id === 'A-0005';
+});
+
+console.log('8-2-3', foundRequest);
+
+// 問8-2-4：承認待ちを申請日の古い順に
+const pendingSortedByOldest = requests
+  .filter((req) => {
+    return req.status === '承認待ち'; 
+  })
+  .sort((a, b) => {
+    return a.requestDate.localeCompare(b.requestDate); 
+  });
+
+console.log('8-2-4', pendingSortedByOldest);
+  </script>
+</body>
+</html>
